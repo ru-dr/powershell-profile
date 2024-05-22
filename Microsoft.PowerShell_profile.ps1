@@ -2,7 +2,14 @@
 ### Version 1.03 - Refactored
 
 # Initial GitHub.com connectivity check with 1 second timeout
-$canConnectToGitHub = Test-Connection github.com -Count 1 -Quiet -TimeoutSeconds 1
+try {
+    $response = Invoke-WebRequest -Uri https://github.com -UseBasicParsing -TimeoutSec 3
+    $canConnectToGitHub = $response.StatusCode -eq 200
+} catch {
+    $canConnectToGitHub = $false
+}
+
+$canConnectToGitHub
 
 # Import Modules and External Profiles
 # Ensure Terminal-Icons module is installed before importing
