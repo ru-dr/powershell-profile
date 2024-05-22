@@ -277,3 +277,77 @@ if (Get-Command zoxide -ErrorAction SilentlyContinue) {
         Write-Error "Failed to install zoxide. Error: $_"
     }
 }
+
+## set Environment variable at system level via user input
+function set-env {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$Name,
+        [Parameter(Mandatory = $true)]
+        [string]$Value
+    )
+    $envPath = [System.Environment]::GetEnvironmentVariable($Name, [System.EnvironmentVariableTarget]::Machine)
+    if ($envPath -eq $null) {
+        [System.Environment]::SetEnvironmentVariable($Name, $Value, [System.EnvironmentVariableTarget]::Machine)
+        Write-Host "Environment variable '$Name' set to '$Value' at system level."
+    } else {
+        Write-Host "Environment variable '$Name' already exists at system level. Please remove it first."
+    }
+}
+
+## remove Environment variable at system level via user input
+function remove-env {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$Name
+    )
+    $envPath = [System.Environment]::GetEnvironmentVariable($Name, [System.EnvironmentVariableTarget]::Machine)
+    if ($envPath -eq $null) {
+        Write-Host "Environment variable '$Name' does not exist at system level."
+    } else {
+        [System.Environment]::SetEnvironmentVariable($Name, $null, [System.EnvironmentVariableTarget]::Machine)
+        Write-Host "Environment variable '$Name' removed from system level."
+    }
+}
+
+## get Environment variable at system level via user input
+function get-env {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$Name
+    )
+    $envPath = [System.Environment]::GetEnvironmentVariable($Name, [System.EnvironmentVariableTarget]::Machine)
+    if ($envPath -eq $null) {
+        Write-Host "Environment variable '$Name' does not exist at system level."
+    } else {
+        Write-Host "Environment variable '$Name': $envPath"
+    }
+}
+
+## clear all the system level cache (temp, TEMP, prefetch, etc)
+function clear-cache {
+    param(
+        [Parameter(Mandatory = $false)]
+        [string]$UserName = $env:USERNAME
+    )
+    
+    $tempDirs = @(
+        "C:\Windows\Temp",
+        "C:\Users\$UserName\AppData\Local\Temp",
+        "C:\Windows\Prefetch"
+    )
+    
+    foreach ($dir in $tempDirs) {
+        if (Test-Path $dir) {
+            Write-Host "Clearing files in $dir"
+            try {
+                Get-ChildItem -Path $dir -Recurse -Force | Remove-Item -Force -Recurse -ErrorAction SilentlyContinue
+                Write-Host "Cleared files in $dir"
+            } catch {
+                Write-Host "Failed to clear files in $dir. Error: $_"
+            }
+        } else {
+            Write-Host "Directory $dir does not exist."
+        }
+    }
+}
