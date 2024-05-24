@@ -267,21 +267,6 @@ Set-PSReadLineOption -Colors @{
     String = 'DarkCyan'
 }
 
-## Final Line to set prompt
-oh-my-posh init pwsh --config https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/the-unnamed.omp.json | Invoke-Expression
-if (Get-Command zoxide -ErrorAction SilentlyContinue) {
-    Invoke-Expression (& { (zoxide init powershell | Out-String) })
-} else {
-    Write-Host "zoxide command not found. Attempting to install via winget..."
-    try {
-        winget install -e --id ajeetdsouza.zoxide
-        Write-Host "zoxide installed successfully. Initializing..."
-        Invoke-Expression (& { (zoxide init powershell | Out-String) })
-    } catch {
-        Write-Error "Failed to install zoxide. Error: $_"
-    }
-}
-
 ## set Environment variable at system level via user input
 function set-env {
     param(
@@ -353,5 +338,20 @@ function clear-cache {
         } else {
             Write-Host "Directory $dir does not exist."
         }
+    }
+}
+
+## Final Line to set prompt
+oh-my-posh init pwsh --config https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/the-unnamed.omp.json | Invoke-Expression
+if (Get-Command zoxide -ErrorAction SilentlyContinue) {
+    Invoke-Expression (& { (zoxide init powershell | Out-String) })
+} else {
+    Write-Host "zoxide command not found. Attempting to install via winget..."
+    try {
+        winget install -e --id ajeetdsouza.zoxide
+        Write-Host "zoxide installed successfully. Initializing..."
+        Invoke-Expression (& { (zoxide init powershell | Out-String) })
+    } catch {
+        Write-Error "Failed to install zoxide. Error: $_"
     }
 }
