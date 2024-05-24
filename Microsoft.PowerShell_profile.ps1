@@ -214,6 +214,10 @@ function docs { Set-Location -Path $HOME\Documents }
 
 function dtop { Set-Location -Path $HOME\Desktop }
 
+function dl { Set-Location -Path $HOME\Downloads }
+
+function home { Set-Location -Path $HOME }
+
 # Quick Access to Editing the Profile
 function ep { vim $PROFILE }
 
